@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: sheldrakecreator/ecommrepo:clientside
+    ports:
+      - "80:80"
+    networks:
+      - myNetwork
+
+  backend:
+    image: sheldrakecreator/ecommrepo:server
+    ports:
+      - "4545:4545"
+    networks:
+      - myNetwork
+
+networks:
+  myNetwork:
+    driver: bridge
