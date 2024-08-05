@@ -1,9 +1,11 @@
-name: Deploy EcommApp
+name: Deploy Java
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Java CI"]
+    types:
+      - completed
+
 
 jobs:
   deploy:
