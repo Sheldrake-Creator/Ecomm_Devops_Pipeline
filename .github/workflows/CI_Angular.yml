@@ -21,6 +21,9 @@ jobs:
       # {2}
       - name: Checkout the source code
         uses: actions/checkout@v4
+        with:
+          repository: Sheldrake-Creator/EcommApp
+          token: ${{ secrets.SERVER_PAT }}
 
       # {3}
       - name: Setup Node.js $
