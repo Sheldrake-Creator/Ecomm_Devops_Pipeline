@@ -6,33 +6,33 @@ on:
     types:
       - completed
 
-
 jobs:
-  deploy:
+  build:
     runs-on: self-hosted
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
 
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v1
+    - name: Pull Docker Image
+      run: sudo docker pull sheldrakecreator/ecommrepo:server
+    - name: Delete Old Docker Container
+      run: sudo docker rm -f java-backend || true
 
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+    - name: Stop and remove existing container
+      run: |
+        if [ "$(sudo docker ps -q -f name=java-backend)" ]; then
+          sudo docker stop java-backend
+          sudo docker rm java-backend
+        fi
 
-      - name: Pull latest Docker images
-        run: |
-          docker pull sheldrakecreator/ecommrepo:clientside
-          docker pull sheldrakecreator/ecommrepo:server
+    - name: Run New Docker Container
+      run: |
+        sudo docker run -d -p 4545:4545 --name java-backend \
+          -e SPRING_PROFILES_ACTIVE=ec2 \
+          -e MYSQL_PORT=${{ secrets.MYSQL_PORT }} \
+          -e MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} \
+          -e MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }} \
+          -e MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} \
+          -e RDS_ENDPOINT=${{ secrets.RDS_ENDPOINT }} \
+          sheldrakecreator/ecommrepo:server
 
-      - name: Stop and remove old containers
-        run: |
-          docker-compose down || true
-
-      - name: Deploy new containers
-        run: |
-          docker-compose up -d
-
-      - name: Verify containers are running
-        run: docker ps -a
+    - name: Verify Docker Container is Running
+      run: sudo docker ps -a | grep java-backend
