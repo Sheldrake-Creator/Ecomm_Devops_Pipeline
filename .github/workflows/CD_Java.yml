@@ -1,4 +1,4 @@
-name: Deploy Java
+name: Java CD
 
 on:
   workflow_run:
