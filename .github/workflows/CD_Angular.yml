@@ -22,8 +22,10 @@ jobs:
           fi
       - name: Run New Docker Container
         run: |
-          sudo docker run -d --name angular-frontend --network myNetwork -p 80:80 -p 443:443  sheldrakecreator/ecommrepo:clientside
-          -v /etc/letsencrypt/live/silas-ecomm.com:/etc/letsencrypt/live/silas-ecomm.com:ro
+          sudo docker run -d --name angular-frontend --network myNetwork \
+          -p 80:80 -p 443:443 \
+          -v /etc/letsencrypt/live/silas-ecomm.com:/etc/letsencrypt/live/silas-ecomm.com:ro \
+          sheldrakecreator/ecommrepo:clientside
 
       - name: Verify Docker Container is Running
         run: sudo docker ps -a | grep angular-frontend
